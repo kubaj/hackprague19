@@ -2,6 +2,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/hackprague19/apigo:$COMMIT_SHA', '.']
   dir: 'apigo'
+  waitFor: ['-']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/hackprague19/apigo:$COMMIT_SHA']
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -9,6 +10,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/hackprague19/apipython:$COMMIT_SHA', '.']
   dir: 'apipython'
+  waitFor: ['-']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/hackprague19/apipython:$COMMIT_SHA']
 - name: 'gcr.io/cloud-builders/gcloud'
