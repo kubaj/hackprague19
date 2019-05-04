@@ -26,13 +26,13 @@ class GeocodingResponse(object):
     def address(self) -> float:
         return self.view.get('Location', {}).get('Address', {}).get('Label', None)
 
+    @property
+    def error(self) -> str:
+        return "Failed to obtain coordinates"
+
     def json(self) -> dict:
-        if self.view:
-            return dict(
-                latitude=self.latitude,
-                longitude=self.longitude,
-                address=self.address
-            )
         return dict(
-            error='Failed to obtain coordinates'
+            latitude=self.latitude,
+            longitude=self.longitude,
+            address=self.address
         )
