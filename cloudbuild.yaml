@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/hackprague19/apigo:$COMMIT_SHA', '.']
+  dir: 'apigo'
+images: ['gcr.io/hackprague19/apigo:$COMMIT_SHA']
