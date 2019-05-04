@@ -2,7 +2,8 @@ FROM golang AS builder
 
 WORKDIR /app
 ADD . .
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/server
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags '-w -s' -a -installsuffix cgo -o /go/bin/server
 
 FROM alpine
 
