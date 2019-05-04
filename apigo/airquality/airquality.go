@@ -45,13 +45,13 @@ func FetchAirquality(lat float32, lng float32) (float64, error) {
 
 	for _, measurement := range locationResponse.Results[0].Measurements {
 		if measurement.Parameter == "no2" {
-			sum += 1.0 - measurement.Value/200
+			sum += getNormalizedValue(measurement.Value / 100)
 		} else if measurement.Parameter == "co" {
-			sum += 1.0 - measurement.Value/5000
+			sum += getNormalizedValue(measurement.Value / 2500)
 		} else if measurement.Parameter == "pm10" {
-			sum += 1.0 - measurement.Value/400
+			sum += getNormalizedValue(measurement.Value / 200)
 		} else if measurement.Parameter == "pm25" {
-			sum += 1.0 - measurement.Value/200
+			sum += getNormalizedValue(measurement.Value / 100)
 		} else {
 			count--
 		}
@@ -59,4 +59,13 @@ func FetchAirquality(lat float32, lng float32) (float64, error) {
 	}
 
 	return 10 * sum / float64(count), nil
+}
+
+func getNormalizedValue(value float64) float64 {
+	newVal := 1 - value
+	if newVal < 0 {
+		return 0
+	}
+
+	return newVal
 }
