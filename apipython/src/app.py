@@ -5,6 +5,7 @@ from flask import (
     jsonify,
     request,
 )
+from werkzeug import exceptions
 
 from places import HereAPIWrapper
 
@@ -21,11 +22,13 @@ def hello_world():
 def geocoding():
     address = request.args.get('address', None)
     if not address:
+        raise exceptions.BadRequest('Unspecified address')
+
+    response = here_api_wrapper.geocode(address)
+    if not response.view:
         return jsonify({})
 
-    return jsonify(
-        here_api_wrapper.geocode(address).json()
-    )
+    return jsonify(response.json())
 
 
 if __name__ == '__main__':
