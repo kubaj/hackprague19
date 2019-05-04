@@ -6,4 +6,11 @@ steps:
   args: ['push', 'gcr.io/hackprague19/apigo:$COMMIT_SHA']
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'run', 'deploy', 'apigo', '--image', 'gcr.io/hackprague19/apigo:$COMMIT_SHA', '--region', 'us-central1']
-images: ['gcr.io/hackprague19/apigo:$COMMIT_SHA']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/hackprague19/apipython:$COMMIT_SHA', '.']
+  dir: 'apipython'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/hackprague19/apipython:$COMMIT_SHA']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'run', 'deploy', 'apipython', '--image', 'gcr.io/hackprague19/apipython:$COMMIT_SHA', '--connectivity', 'internal', '--region', 'us-central1']
+images: []
