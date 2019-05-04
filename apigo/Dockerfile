@@ -1,4 +1,4 @@
-FROM golang
+FROM golang AS builder
 
 WORKDIR /app
 ADD . .
