@@ -51,7 +51,16 @@ func main() {
 		}
 		count += len(additional.Details)
 
-		return c.JSON(http.StatusOK, models.Response{Name: "Overall", Description: "Overall quality of life on this address", Quality: sum / float64(count), Details: qualities})
+		return c.JSON(http.StatusOK, models.Response{
+			Name:        "Overall",
+			Description: "Overall quality of life on this address",
+			Quality:     sum / float64(count),
+			Details:     qualities,
+			Location: &models.Location{
+				Lng: geo.Longitude,
+				Lat: geo.Latitude,
+			},
+		})
 	})
 	e.Logger.Fatal(e.Start(":" + serverPort))
 }
