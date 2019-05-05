@@ -4,8 +4,8 @@ type Response struct {
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	Quality     float64    `json:"quality"`
-	Location    *Location  `json:"location"`
-	Details     []Response `json:"details"`
+	Location    *Location  `json:"location,omitempty"`
+	Details     []Response `json:"details,omitempty"`
 }
 
 type Location struct {
