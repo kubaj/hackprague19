@@ -7,6 +7,7 @@ from flask import (
 )
 from werkzeug import exceptions
 
+from crime import MapaCriminalityAPIWrapper
 from places import (
     HereAPIWrapper,
     build_places_response,
@@ -14,6 +15,7 @@ from places import (
 
 app = Flask(__name__)
 here_api_wrapper = HereAPIWrapper()
+crime_api_wrapper = MapaCriminalityAPIWrapper()
 
 
 @app.route('/')
@@ -43,6 +45,20 @@ def places():
 
     all_places = list(here_api_wrapper.get_transportation(lat, lng)) + list(here_api_wrapper.get_services(lat, lng))
     return jsonify(build_places_response(all_places))
+
+
+@app.route('/crime', methods=['GET'])
+def crime():
+    lat = request.args.get('lat', None)
+    lng = request.args.get('lng', None)
+    if not (lat and lng):
+        raise exceptions.BadRequest('Unspecified `lat` and `lng`')
+
+    name, id = crime_api_wrapper.get_area(float(lat), float(lng))
+    return jsonify({
+        'name': name,
+        'id': id
+    })
 
 
 if __name__ == '__main__':
