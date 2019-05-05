@@ -3,18 +3,12 @@ package main
 import (
 	"hackprague/airquality"
 	"hackprague/apipython"
+	"hackprague/models"
 	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
 )
-
-type Response struct {
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	Quality     float64    `json:"quality"`
-	Details     []Response `json:"details"`
-}
 
 func main() {
 	serverPort := os.Getenv("PORT")
@@ -35,16 +29,29 @@ func main() {
 			return c.JSON(http.StatusBadGateway, nil)
 		}
 
-		qualities := []Response{}
+		qualities := []models.Response{}
 		sum := 0.0
+		count := 0
 
 		air, err := airquality.FetchAirquality(geo.Latitude, geo.Longitude)
 		if err == nil {
 			sum += air
-			qualities = append(qualities, Response{Name: "Air quality", Quality: air, Description: "", Details: []Response{}})
+			count++
+			qualities = append(qualities, models.Response{Name: "Air quality", Quality: air, Description: "Air quality in surrounding areas. Takes into considerations levels of CO2, SO2, particles of size PM10 and PM2.5", Details: []models.Response{}})
 		}
 
-		return c.JSON(http.StatusOK, Response{Name: "Overall", Description: "Overall quality of life on this address", Quality: sum / float64(len(qualities)), Details: qualities})
+		additional, err := apipython.GetAdditionalQualities(geo.Latitude, geo.Longitude)
+		if err != nil {
+			return c.JSON(http.StatusBadGateway, nil)
+		}
+
+		for _, quality := range additional.Details {
+			qualities = append(qualities, quality)
+			sum += quality.Quality
+		}
+		count += len(additional.Details)
+
+		return c.JSON(http.StatusOK, models.Response{Name: "Overall", Description: "Overall quality of life on this address", Quality: sum / float64(count), Details: qualities})
 	})
 	e.Logger.Fatal(e.Start(":" + serverPort))
 }
